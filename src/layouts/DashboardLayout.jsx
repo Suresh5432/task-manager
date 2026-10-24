@@ -1,4 +1,6 @@
+import ProjectOverview from "../components/ProjectOverview";
 import Sidebar from "../components/Sidebar";
+import SummaryCards from "../components/SummaryCards";
 
 function DashboardLayout(){
     return(
@@ -15,12 +17,8 @@ function DashboardLayout(){
                             + Add Task
                         </button>
                     </header>
-                    <section className="dashboard-placeholder">
-                        <h2>Your workspace</h2>
-                        <p>
-                            Your summary cards, projects, and task table will appear here
-                        </p>
-                    </section>
+                    <SummaryCards/>
+                    <ProjectOverview/>
                 </main>
                 <aside className="right-panel">
                     <section className="panel-placeholder">
