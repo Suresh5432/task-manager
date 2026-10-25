@@ -84,20 +84,24 @@ function DashboardLayout(){
       }
     });
 
+    const defaultSettings = {
+      fullName: "Suresh",
+      email: "",
+      workspace: "Personal workspace",
+      theme: "light",
+      compactMode: false,
+      defaultPriority: "Medium",
+      defaultStatus: "To Do",
+    };
+
     const [settings, setSettings]=useState(()=>{
         try{
-            return JSON.parse(
-                localStorage.getItem("taskpilot-settings")
-            ) ?? {
-                defaultPriority: "Medium",
-                defaultStatus: "To Do",
-            };
+            const saved =localStorage.getItem("taskpilot-settings");
+            return saved ?{...defaultSettings, ...JSON.parse(saved)}
+            : defaultSettings;
         }
         catch{
-            return {
-                defaultPriority: "Medium",
-                defaultStatus: "To Do",
-            };
+            return defaultSettings;
         }
     });
 
@@ -120,11 +124,19 @@ function DashboardLayout(){
         localStorage.setItem("taskpilot-activities",JSON.stringify(activities));
     },[activities]);
 
+    useEffect(() => {
+      document.documentElement.setAttribute(
+        "data-theme",
+        settings.theme || "light"
+      );
+    }, [settings.theme]);
+
     useEffect(()=>{
-        document.documentElement.setAttribute("date-theme",
-            settings.theme || "Light"
+        document.documentElement.classList.toggle(
+            "compact-mode",
+            settings.compactMode===true
         );
-    },[settings.theme]);
+    },[settings.compactMode]);
 
     function addActivity(title,description, icon,taskId=null){
 
@@ -318,6 +330,7 @@ function DashboardLayout(){
                     {activeView ==="Integrations" && <IntegrationsPage />}
 
                     {activeView === "Settings" && <SettingsPage 
+                            settings={settings}
                             onSettingsChange={setSettings}
                     />}
                 

@@ -1,51 +1,16 @@
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-const defaultSettings = {
-  fullName: "Suresh",
-  email: "",
-  workspace: "Personal workspace",
-  theme: "light",
-  compactMode: false,
-  defaultPriority: "Medium",
-  defaultStatus: "To Do",
-};
+function SettingsPage({settings,onSettingsChange}) {
 
-function loadSettings() {
-  try {
-    const saved = localStorage.getItem("taskpilot-settings");
-    return saved
-      ? { ...defaultSettings, ...JSON.parse(saved) }
-      : defaultSettings;
-  } catch {
-    return defaultSettings;
-  }
-}
-
-function SettingsPage({onSettingsChange}) {
-  const [settings, setSettings] = useState(loadSettings);
   const [savedMessage, setSavedMessage] = useState("");
 
-  useEffect(() => {
-    localStorage.setItem(
-      "taskpilot-settings",
-      JSON.stringify(settings)
-    );
-  }, [settings]);
 
   function updateSetting(key, value) {
-    setSettings((current) => {
-      const updated={
+    onSettingsChange((current) => ({
       ...current,
       [key]: value,
-      };
-       localStorage.setItem(
-        "taskpilot-settings",
-        JSON.stringify(updated)
-      );
-      onSettingsChange?.(updated);
-      return updated
-    });
+    }));
     setSavedMessage("");
   }
 
@@ -56,17 +21,15 @@ function SettingsPage({onSettingsChange}) {
       "taskpilot-settings",
       JSON.stringify(settings)
     );
-    onSettingsChange?.(settings);
     setSavedMessage("Settings saved successfully.");
   }
 
   function resetSettings() {
-    setSettings(defaultSettings);
+    onSettingsChange({ ...defaultSettings });
     localStorage.setItem(
       "taskpilot-settings",
       JSON.stringify(defaultSettings)
     );
-    onSettingsChange?.(defaultSettings);
     setSavedMessage("Settings restored to defaults.");
   }
 

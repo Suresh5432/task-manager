@@ -1,32 +1,47 @@
 import { getTaskStats } from '../utils/taskUtils';
 
 function SummaryCards({ tasks }){
-    const stats =getTaskStats(tasks);
+
+    const totalTasks=tasks.length;
+    const completedTasks=tasks.filter((task)=>
+      task.status==="Completed").length;
+
+    const inProgressTasks=tasks.filter((task)=>
+      task.status==="In Progress").length;
+
+    const overdueTasks=tasks.filter((task =[])=>{
+      if(!task.dueDate || task.status=="Completed"){
+        return false;
+      }
+      const dueDate=new Date(task.dueDate);
+      dueDate.setHours(23,59,59,999);
+      return !Number.isNaN(dueDate.getTime()) && dueDate< new Date();
+    }).length;
+
+    const completionPercentage=totalTasks===0 ? 0 : Math.round((completedTasks/totalTasks)*100);
+
 
     const summaryItems = [
+
     {
       label: "Total Tasks",
-      value: stats.total,
+      value: totalTasks,
       icon: "▤",
-      color: "blue",
     },
     {
       label: "In Progress",
-      value: stats.inProgress,
+      value: inProgressTasks,
       icon: "◷",
-      color: "purple",
     },
     {
       label: "Completed",
-      value: stats.completed,
+      value: completedTasks,
       icon: "✓",
-      color: "green",
     },
     {
       label: "Overdue",
-      value: stats.overdue,
+      value: overdueTasks,
       icon: "!",
-      color: "red",
     },
   ];
     return(
@@ -35,13 +50,37 @@ function SummaryCards({ tasks }){
                 <article className="summary-card" key={item.label}>
                     <div className="summary-card-top">
                         <span>{item.label}</span>
-                        <span className={`summary-icon ${item.color}`}>
+                        <span className="summary-card-icon">
                             {item.icon}
                         </span>
                     </div>
                     <div className="summary-value">{item.value}</div>
                 </article>
             ))}
+            <div className="completion-progress">
+              <div className="completion-progress-header">
+                <span>Overall completion</span>
+                <strong>{completionPercentage}%</strong>
+              </div>
+                
+              <div
+                className="completion-progress-track"
+                role="progressbar"
+                aria-label="Task completion"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={completionPercentage}
+              >
+                <div
+                  className="completion-progress-fill"
+                  style={{ width: `${completionPercentage}%` }}
+                />
+              </div>
+                
+              <p>
+                {completedTasks} of {totalTasks} tasks completed
+              </p>
+            </div>
         </section>
     );
 }

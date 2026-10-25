@@ -2175,6 +2175,267 @@ button {
   }
 }
 
+/* applications theme css */
+
+
+/* ===== TaskPilot Dark Theme  ===== */
+
+
+/* TaskPilot theme tokens */
+:root {
+  color-scheme: light;
+
+  --app-bg: #f4f5fb;
+  --surface-bg: #ffffff;
+  --surface-raised: #ffffff;
+  --text-primary: #25283a;
+  --text-secondary: #737b94;
+  --border-color: #e4e7f0;
+  --accent: #6258e8;
+  --accent-hover: #5146d8;
+  --accent-soft: #efedff;
+  --input-bg: #ffffff;
+  --shadow-color: rgb(30 35 70 / 8%);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --app-bg: #171923;
+  --surface-bg: #202330;
+  --surface-raised: #272a38;
+  --text-primary: #f4f5ff;
+  --text-secondary: #a5aac0;
+  --border-color: #35394b;
+  --accent: #8275ff;
+  --accent-hover: #968bff;
+  --accent-soft: #302b50;
+  --input-bg: #1c1f2b;
+  --shadow-color: rgb(0 0 0 / 20%);
+}
+
+
+/* Main application areas */
+:root[data-theme="dark"] body,
+:root[data-theme="dark"] .app-background {
+  background-color: var(--app-bg);
+  color: var(--text-primary);
+}
+
+:root[data-theme="dark"] .dashboard-window,
+:root[data-theme="dark"] .main-content,
+:root[data-theme="dark"] .sidebar,
+:root[data-theme="dark"] .right-panel {
+  background-color: var(--app-bg);
+  color: var(--text-primary);
+}
+
+/* Cards and content panels */
+:root[data-theme="dark"] .summary-card,
+:root[data-theme="dark"] .project-card,
+:root[data-theme="dark"] .settings-card,
+:root[data-theme="dark"] .right-panel > section {
+  background-color: var(--surface-bg);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+/* Headings and readable text */
+:root[data-theme="dark"] h1,
+:root[data-theme="dark"] h2,
+:root[data-theme="dark"] h3,
+:root[data-theme="dark"] h4,
+:root[data-theme="dark"] .project-card h3,
+:root[data-theme="dark"] .summary-card h3 {
+  color: var(--text-primary);
+}
+
+:root[data-theme="dark"] p,
+:root[data-theme="dark"] label,
+:root[data-theme="dark"] small,
+:root[data-theme="dark"] .project-card p,
+:root[data-theme="dark"] .summary-card p {
+  color: var(--text-secondary);
+}
+
+/* Form controls */
+:root[data-theme="dark"] input,
+:root[data-theme="dark"] textarea,
+:root[data-theme="dark"] select {
+  background-color: var(--surface-bg);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+/* Task list and table */
+:root[data-theme="dark"] table,
+:root[data-theme="dark"] thead,
+:root[data-theme="dark"] tbody,
+:root[data-theme="dark"] tr,
+:root[data-theme="dark"] td,
+:root[data-theme="dark"] th {
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+
+/* ===== Midnight Indigo theme ===== */
+
+:root[data-theme="dark"] body {
+  background: var(--app-bg);
+  color: var(--text-primary);
+}
+
+:root[data-theme="dark"] .app-background,
+:root[data-theme="dark"] .dashboard-window,
+:root[data-theme="dark"] .main-content,
+:root[data-theme="dark"] .sidebar,
+:root[data-theme="dark"] .right-panel {
+  background-color: var(--app-bg);
+  color: var(--text-primary);
+}
+
+:root[data-theme="dark"] .summary-card,
+:root[data-theme="dark"] .project-card,
+:root[data-theme="dark"] .settings-card,
+:root[data-theme="dark"] .right-panel > section,
+:root[data-theme="dark"] .task-modal,
+:root[data-theme="dark"] .completion-progress {
+  background-color: var(--surface-bg);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+  box-shadow: 0 8px 24px var(--shadow-color);
+}
+
+/* Main headings */
+:root[data-theme="dark"] h1,
+:root[data-theme="dark"] h2,
+:root[data-theme="dark"] h3,
+:root[data-theme="dark"] h4 {
+  color: var(--text-primary);
+}
+
+/* Supporting text */
+:root[data-theme="dark"] .dashboard-header p,
+:root[data-theme="dark"] .settings-heading p,
+:root[data-theme="dark"] .settings-section-heading p,
+:root[data-theme="dark"] .project-card p,
+:root[data-theme="dark"] .summary-card p,
+:root[data-theme="dark"] .right-panel p {
+  color: var(--text-secondary);
+}
+
+/* Sidebar navigation */
+:root[data-theme="dark"] .nav-item {
+  color: var(--text-secondary);
+  border-color: transparent;
+}
+
+:root[data-theme="dark"] .nav-item:hover {
+  background-color: var(--surface-raised);
+  color: var(--text-primary);
+}
+
+:root[data-theme="dark"] .nav-item.active {
+  background-color: var(--accent-soft);
+  color: #c7bfff;
+  border-color: transparent;
+}
+
+/* Inputs, dropdowns and text areas */
+:root[data-theme="dark"] input,
+:root[data-theme="dark"] textarea,
+:root[data-theme="dark"] select {
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+:root[data-theme="dark"] input::placeholder,
+:root[data-theme="dark"] textarea::placeholder {
+  color: #858ba3;
+}
+
+/* Task table */
+:root[data-theme="dark"] table,
+:root[data-theme="dark"] th,
+:root[data-theme="dark"] td {
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+:root[data-theme="dark"] tbody tr:hover {
+  background-color: var(--surface-raised);
+}
+
+/* Buttons */
+:root[data-theme="dark"] .add-task-button {
+  background-color: var(--accent);
+  color: #ffffff;
+}
+
+:root[data-theme="dark"] .add-task-button:hover {
+  background-color: var(--accent-hover);
+}
+
+/* Dividers */
+:root[data-theme="dark"] hr {
+  border-color: var(--border-color);
+}
+
+
+
+/* Compact mode */
+:root.compact-mode .task-table th,
+:root.compact-mode .task-table td {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+:root.compact-mode .project-card,
+:root.compact-mode .summary-card {
+  padding: 14px;
+}
+
+:root.compact-mode .task-row {
+  min-height: 40px;
+}
+
+.completion-progress {
+  padding: 18px;
+  margin-top: 16px;
+  border: 1px solid var(--border-color, #e5e8f0);
+  border-radius: 12px;
+  background: var(--surface-bg, #fff);
+  color: var(--text-primary, #252a3a);
+}
+
+.completion-progress-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.completion-progress-track {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--border-color, #e5e8f0);
+}
+
+.completion-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: #6258e8;
+  transition: width 250ms ease;
+}
+
+.completion-progress p {
+  margin: 10px 0 0;
+  color: var(--text-secondary, #788198);
+  font-size: 13px;
+}
 
 
 /* Responsive layout */

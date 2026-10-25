@@ -41,7 +41,7 @@ function TaskOverView({ tasks, onDeleteTask, onEditTask, onUpdateStatus, onViewT
         }
         else if(sortBy==="dueDate"){
             const dateA=new Date(a.dueDate).getTime();
-            const dateB=new Date(b.dueDate).getDate();
+            const dateB=new Date(b.dueDate).getTime();
             comparison=
                 (Number.isNaN(dateA) ? Infinity :dateA)-
                 (Number.isNaN(dateB)? Infinity: dateB);
@@ -60,6 +60,14 @@ function TaskOverView({ tasks, onDeleteTask, onEditTask, onUpdateStatus, onViewT
         setCurrentPage(1);
     },[searchTerm,statusFilter,priorityFilter,sortBy,sortOrder,pageSize]);
 
+    function handleClearFiltrs(){
+         setSearchTerm("");
+         setStatusFilter("All");
+         setPriorityFilter("All");
+         setSortBy("dueDate");
+         setSortOrder("ascending");
+         setCurrentPage(1);
+        }
     return (
         <section  className="task-overview">
             <div className="section-heading">
@@ -118,6 +126,13 @@ function TaskOverView({ tasks, onDeleteTask, onEditTask, onUpdateStatus, onViewT
                     <option value="ascending">Ascending</option>
                     <option value="descending">Descending</option>
                 </select>
+                <button
+                    type="button"
+                    className="clear-filter-button"
+                    onClick={handleClearFiltrs}
+                >
+                     ✕ Clear filters
+                </button>
             </div>
             <div className="task-table-wrapper">
                 <table className="task-table">
@@ -154,7 +169,7 @@ function TaskOverView({ tasks, onDeleteTask, onEditTask, onUpdateStatus, onViewT
                                 <td>{task.dueDate}</td>
                                 <td>
                                     <span
-                                        className={`task-badge priorf.mapity-${(task.priority ?? "Medium").toLowerCase()}`}
+                                        className={`task-badge priority-${(task.priority ?? "Medium").toLowerCase()}`}
                                     >
                                         {task.priority}
                                     </span>
@@ -201,9 +216,12 @@ function TaskOverView({ tasks, onDeleteTask, onEditTask, onUpdateStatus, onViewT
             </div>
             <div className="pagination">
                 <span className="pagination-info">
-                    {sortedTasks.length===0 ? "No tasks" : 
-                    `Showing ${startIndex+1}-
-                    ${Math.min(startIndex+pageSize,sortedTasks.length)} of ${sortedTasks.length} tasks`}
+                  {sortedTasks.length === 0
+                    ? "No tasks"
+                    : `Showing ${startIndex + 1}-${Math.min(
+                        startIndex + pageSize,
+                        sortedTasks.length
+                      )} of ${sortedTasks.length} tasks`}
                 </span>
                 <div className="pagination-controls">
                     <label htmlFor="pageSize">Rows:</label>
