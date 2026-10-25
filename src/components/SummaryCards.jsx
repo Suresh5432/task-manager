@@ -1,37 +1,34 @@
+import { getTaskStats } from '../utils/taskUtils';
 
+function SummaryCards({ tasks }){
+    const stats =getTaskStats(tasks);
 
-const summaryItems=[
-{
-    label: "total Tasks",
-    value: 24,
-    icon:"▤",
-    color: "blue",
-    trend: "+12%",
-    description: "vs. last month"
-},{
-    label: "Inprogress",
-    value: 8,
-    icon:"◷",
-    color: "purple",
-    trend: "+5%",
-    description: "vs. last month"
-},{
-    label: "Completed",
-    value: 12,
-    icon:"✓",
-    color: "green",
-    trend: "+18%",
-    description: "vs. last month"
-},{
-    label: "Overdue",
-    value: 4,
-    icon:"!",
-    color: "red",
-    trend: "-3%",
-    description: "vs. last month"
-}];
-
-function SummaryCards(){
+    const summaryItems = [
+    {
+      label: "Total Tasks",
+      value: stats.total,
+      icon: "▤",
+      color: "blue",
+    },
+    {
+      label: "In Progress",
+      value: stats.inProgress,
+      icon: "◷",
+      color: "purple",
+    },
+    {
+      label: "Completed",
+      value: stats.completed,
+      icon: "✓",
+      color: "green",
+    },
+    {
+      label: "Overdue",
+      value: stats.overdue,
+      icon: "!",
+      color: "red",
+    },
+  ];
     return(
         <section className="summary-grid">
             {summaryItems.map((item)=>(
@@ -43,10 +40,6 @@ function SummaryCards(){
                         </span>
                     </div>
                     <div className="summary-value">{item.value}</div>
-                    <div className="summary-card">
-                        <span className={item.color}>{item.trend}</span>
-                        <span>{item.description}</span>
-                    </div>
                 </article>
             ))}
         </section>
