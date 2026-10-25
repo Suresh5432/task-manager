@@ -1,115 +1,87 @@
-const projects = [
-  {
-    id: 1,
-    name: "Website Redesign",
-    category: "UI/UX Design",
-    dueDate: "Nov 15, 2026",
-    totalTasks: 12,
-    completedTasks: 9,
-    color: "blue",
-    members: ["AS", "MK", "RJ"],
-  },
-  {
-    id: 2,
-    name: "Mobile Application",
-    category: "Development",
-    dueDate: "Nov 22, 2026",
-    totalTasks: 20,
-    completedTasks: 11,
-    color: "purple",
-    members: ["SK", "AP", "VK"],
-  },
-  {
-    id: 3,
-    name: "Marketing Campaign",
-    category: "Marketing",
-    dueDate: "Nov 30, 2026",
-    totalTasks: 15,
-    completedTasks: 6,
-    color: "orange",
-    members: ["RJ", "AS", "MK"],
-  },
-];
 
-function ProjectOverview(){
-    return (
-        <section className="project-section">
-            <div className="section-heading">
-                <div>
-                    <h2>Project OverView</h2>
-                    <p>Track progress across yout porjects</p>
+function ProjectOverview({ projects = [], tasks = [], getProjectProgress }) {
+  return (
+    <section className="project-overview">
+      <div className="section-header">
+        <div>
+          <h2>Project Overview</h2>
+          <p>Track progress across your projects</p>
+        </div>
+
+        <span className="project-count">
+          {projects.length} projects
+        </span>
+      </div>
+
+      {projects.length === 0 ? (
+        <p className="empty-state">No projects available yet.</p>
+      ) : (
+        <div className="project-grid">
+          {projects.map((project) => {
+            const progress = getProjectProgress
+              ? getProjectProgress(project.id)
+              : {
+                  total: tasks.filter(
+                    (task) => task.projectId === project.id
+                  ).length,
+                  completed: 0,
+                  percentage: 0,
+                };
+
+            return (
+              <article className="project-card" key={project.id}>
+                <div className="project-card-header">
+                  <span
+                    className="project-color"
+                    style={{ backgroundColor: project.color }}
+                  />
+
+                  <h3>{project.name}</h3>
                 </div>
-                <button type="button" className="text-button">
-                    View all
-                </button>
-            </div>
-            <div className="projects-grid">
-                {projects.map((project)=>{
-                    const progress= 
-                        project.totalTasks ? 
-                                Math.round((project.completedTasks/project.totalTasks)*100)
-                                : 0;
-                    return (
-                        <article className="project-card" key={project.id}>
-                            <div className="project-card-header">
-                                <div className={`project-icon ${project.color}`}>
-                                    ▰
-                                </div>
-                                <button
-                                    type="button"
-                                    className="project-menu"
-                                    aria-label={`More options for ${project.name}`}
-                                >
-                                    ⋯
-                                </button>
-                            </div>
-                            <h3>{project.name}</h3>
-                            <p className="project-category">
-                                {project.category}
-                            </p>
-                            <div className="project-date">
-                                <span>Due date</span>
-                                <strong>{project.dueDate}</strong>
-                            </div>
-                            <div className="project-progress-label">
-                                <span>Progress</span>
-                                <strong>{progress}%</strong>
-                            </div>
-                            <div 
-                                className="progress-track"
-                                role="progressbar"
-                                aria-label={`${project.name} progress`}
-                                aria-valuenow={progress}
-                                aria-valuemin={0}
-                                aria-valuemax={100}
-                            >
-                                <div
-                                    className={`progress-fill ${project.color}`}
-                                    style={{width: `${progress}%`}}
-                                />
-                            </div>
 
-                            <div className="project-footer">
-                                <div className="member-avatars">
-                                    {project.members.map((member,index)=>{
-                                        <span
-                                        className={`member-avatar avatar-${index}`}
-                                        key={`${project.id}-${member}-${index}`}
-                                        >
-                                            {member}
-                                        </span>
-                                    })}
-                                </div>
-                                <span className="task-count">
-                                    {project.completedTasks}/{project.totalTasks} tasks
-                                </span>
-                            </div>
-                        </article>
-                    );
-                })}
-            </div>
-        </section>
-    );
+                <p className="project-description">
+                  {project.description}
+                </p>
+
+                <div className="project-progress-info">
+                  <span>Progress</span>
+                  <strong>{progress.percentage}%</strong>
+                </div>
+
+                <div
+                  className="progress-track"
+                  role="progressbar"
+                  aria-valuenow={progress.percentage}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-label={`${project.name} progress`}
+                >
+                  <div
+                    className="progress-fill"
+                    style={{
+                      width: `${progress.percentage}%`,
+                      backgroundColor: project.color,
+                    }}
+                  />
+                </div>
+
+                <div className="project-card-footer">
+                  <span>{progress.completed} completed</span>
+                  <span>{progress.total} tasks</span>
+                </div>
+
+                {project.deadline && (
+                  <p className="project-deadline">
+                    Deadline: {project.deadline}
+                  </p>
+                )}
+              </article>
+            );
+          })}
+        </div>
+      )}
+    </section>
+  );
 }
 
 export default ProjectOverview;

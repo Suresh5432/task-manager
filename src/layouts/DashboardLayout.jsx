@@ -22,6 +22,7 @@ const initialTasks = [
     priority: "High",
     tag: "Design",
     status: "In Progress",
+    projectId: "project-1",
   },
   {
     id: 2,
@@ -31,6 +32,7 @@ const initialTasks = [
     priority: "Medium",
     tag: "Development",
     status: "To Do",
+    projectId: "project-1",
   },
   {
     id: 3,
@@ -40,6 +42,7 @@ const initialTasks = [
     priority: "Low",
     tag: "Documentation",
     status: "Completed",
+    projectId: "project-1",
   },
 ];
 
@@ -83,6 +86,37 @@ function DashboardLayout(){
         return [];
       }
     });
+
+    const [projects, setProjects]=useState(()=>{
+        try{
+            const saved =localStorage.getItem("taskpilot-projects");
+            return saved ? JSON.parse(saved) : initialTasks;
+        }
+        catch{
+            return initialTasks;
+        }
+    });
+    useEffect(()=>{
+        localStorage.setItem(
+            "taskpilot-projects",
+            JSON.stringify(projects)
+        );
+    },[projects]);
+
+    function getProjectProgress(projectId){
+        const projectTasks=tasks.filter(
+            (task)=> task.projectId===projectId
+        );
+        const completedTasks=projectTasks.filter(
+            (task)=>task.status==="Completed"
+        ).length;
+        return{
+            total: projectTasks.length,
+            completed: completedTasks,
+            percentage: projectTasks.length ?
+                Math.round((completedTasks/projectTasks.length)*100) : 0,
+        };
+    }
 
     const defaultSettings = {
       fullName: "Suresh",
@@ -288,7 +322,11 @@ function DashboardLayout(){
                         <>
                         <SummaryCards tasks={tasks}/>
 
-                        <ProjectOverview/>
+                        <ProjectOverview 
+                            projects={projects}
+                            tasks={tasks}
+                            getProjectProgress={getProjectProgress}
+                        />
 
                         <TaskOverView 
                             tasks={tasks} 
