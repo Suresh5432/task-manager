@@ -9,6 +9,7 @@ function TaskOverView({ tasks, onDeleteTask, onEditTask, onUpdateStatus, onViewT
     const [sortOrder, setSortOrder]=useState("asecending");
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(5);
+    const [selectedTaskIds, setSelectedTaskIds] = useState([]);
 
     const filteredTasks=tasks.filter((task)=>{
         const query=searchTerm.toLowerCase().trim();
@@ -61,13 +62,56 @@ function TaskOverView({ tasks, onDeleteTask, onEditTask, onUpdateStatus, onViewT
     },[searchTerm,statusFilter,priorityFilter,sortBy,sortOrder,pageSize]);
 
     function handleClearFiltrs(){
-         setSearchTerm("");
-         setStatusFilter("All");
-         setPriorityFilter("All");
-         setSortBy("dueDate");
-         setSortOrder("ascending");
-         setCurrentPage(1);
-        }
+        setSearchTerm("");
+        setStatusFilter("All");
+        setPriorityFilter("All");
+        setSortBy("dueDate");
+        setSortOrder("ascending");
+        setCurrentPage(1);
+    }
+    function toggleTaskSelection(taskId) {
+      setSelectedTaskIds((current) =>
+        current.includes(taskId)
+          ? current.filter((id) => id !== taskId)
+          : [...current, taskId]
+      );
+    }
+
+    function toggleSelectAll() {
+      const visibleIds = paginatedTasks.map((task) => task.id);
+
+      const allSelected =
+        visibleIds.length > 0 &&
+        visibleIds.every((id) => selectedTaskIds.includes(id));
+
+      setSelectedTaskIds((current) =>
+        allSelected
+          ? current.filter((id) => !visibleIds.includes(id))
+          : [...new Set([...current, ...visibleIds])]
+      );
+    }
+
+    function handleBulkComplete() {
+      selectedTaskIds.forEach((taskId) =>
+        onUpdateStatus(taskId, "Completed")
+      );
+
+      setSelectedTaskIds([]);
+    }
+
+    function handleBulkDelete() {
+      if (selectedTaskIds.length === 0) return;
+
+      const confirmed = window.confirm(
+        `Delete ${selectedTaskIds.length} selected task(s)?`
+      );
+
+      if (!confirmed) return;
+
+      selectedTaskIds.forEach(onDeleteTask);
+      setSelectedTaskIds([]);
+    }
+    
     return (
         <section  className="task-overview">
             <div className="section-heading">
@@ -128,16 +172,58 @@ function TaskOverView({ tasks, onDeleteTask, onEditTask, onUpdateStatus, onViewT
                 </select>
                 <button
                     type="button"
-                    className="clear-filter-button"
+                    className="clear-filters-button"
                     onClick={handleClearFiltrs}
                 >
                      ✕ Clear filters
                 </button>
             </div>
+            {selectedTaskIds.length > 0 && (
+                <div className="bulk-actions">
+                    <span>
+                    {selectedTaskIds.length} selected
+                    </span>
+                
+                    <button
+                    type="button"
+                    onClick={handleBulkComplete}
+                    >
+                    ✓ Mark completed
+                    </button>
+                
+                    <button
+                    type="button"
+                    className="bulk-delete-button"
+                    onClick={handleBulkDelete}
+                    >
+                    × Delete selected
+                    </button>
+                
+                    <button
+                    type="button"
+                    onClick={() => setSelectedTaskIds([])}
+                    >
+                    Clear selection
+                    </button>
+                </div>
+            )}
             <div className="task-table-wrapper">
                 <table className="task-table">
                     <thead>
                         <tr>
+                            <th>
+                              <input
+                                type="checkbox"
+                                aria-label="Select all tasks on this page"
+                                checked={
+                                  paginatedTasks.length > 0 &&
+                                  paginatedTasks.every((task) =>
+                                    selectedTaskIds.includes(task.id)
+                                  )
+                                }
+                                onChange={toggleSelectAll}
+                              />
+                            </th>
                             <th>Task</th>
                             <th>Due Date</th>
                             <th>priority</th>
@@ -156,6 +242,14 @@ function TaskOverView({ tasks, onDeleteTask, onEditTask, onUpdateStatus, onViewT
                         )}
                         {paginatedTasks.map((task)=>(
                             <tr key={task.id}>
+                                <td>
+                                  <input
+                                    type="checkbox"
+                                    aria-label={`Select ${task.title}`}
+                                    checked={selectedTaskIds.includes(task.id)}
+                                    onChange={() => toggleTaskSelection(task.id)}
+                                  />
+                                </td>
                                 <td>
                                     <button 
                                         className="task-title-button"

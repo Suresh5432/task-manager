@@ -2383,6 +2383,23 @@ button {
   border-color: var(--border-color);
 }
 
+/* clear filter button */
+
+.clear-filters-button {
+  padding: 10px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--surface-bg);
+  color: var(--text-primary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.clear-filters-button:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
 
 
 /* Compact mode */
@@ -2436,6 +2453,52 @@ button {
   color: var(--text-secondary, #788198);
   font-size: 13px;
 }
+
+/* select multiple tasks and applying changes */
+
+
+.bulk-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  margin-bottom: 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--surface-bg);
+  color: var(--text-primary);
+}
+
+.bulk-actions span {
+  margin-right: auto;
+  font-weight: 600;
+}
+
+.bulk-actions button {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--surface-raised, var(--surface-bg));
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.bulk-actions button:hover {
+  border-color: var(--accent);
+}
+
+.bulk-actions .bulk-delete-button {
+  color: #ef6464;
+}
+
+.task-table input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
 
 
 /* Responsive layout */
