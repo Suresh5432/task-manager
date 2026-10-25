@@ -12,6 +12,7 @@ import NotificationsPage from "../components/NotifictionsPage";
 import InboxPage from "../components/InboxPage";
 import IntegrationsPage from "../components/IntegrationsPage";
 import SettingsPage from "../components/SettingsPage";
+import AddProjectModal from "../components/AddProjectModal";
 
 const initialTasks = [
   {
@@ -87,13 +88,15 @@ function DashboardLayout(){
       }
     });
 
+    const [showAddProjectModal,setShowAddProjectModal] =useState(false);
+
     const [projects, setProjects]=useState(()=>{
         try{
             const saved =localStorage.getItem("taskpilot-projects");
-            return saved ? JSON.parse(saved) : initialTasks;
+            return saved ? JSON.parse(saved) : [];
         }
         catch{
-            return initialTasks;
+            return [];
         }
     });
     useEffect(()=>{
@@ -102,6 +105,13 @@ function DashboardLayout(){
             JSON.stringify(projects)
         );
     },[projects]);
+
+    function handelAddProject(newProject){
+        setProjects((currentProjects)=>[
+            ...currentProjects,
+            newProject,
+        ]);
+    }
 
     function getProjectProgress(projectId){
         const projectTasks=tasks.filter(
@@ -322,11 +332,23 @@ function DashboardLayout(){
                         <>
                         <SummaryCards tasks={tasks}/>
 
+                        <div className="project-actions">
+                            <button
+                                type="button"
+                                className="primary-button"
+                                onClick={()=>setShowAddProjectModal(true)}
+                            >
+                                + Create Project
+                            </button>
+                        </div>
+
                         <ProjectOverview 
                             projects={projects}
                             tasks={tasks}
                             getProjectProgress={getProjectProgress}
                         />
+
+                        
 
                         <TaskOverView 
                             tasks={tasks} 
@@ -382,6 +404,7 @@ function DashboardLayout(){
             </div>
             {(isModalOpen || editingTask) && (
                 <AddTaskModal 
+                    projects={projects}
                     key={editingTask?.id ?? "new-task"}
                     existingTask={editingTask}
                     onClose={()=>{
@@ -401,6 +424,12 @@ function DashboardLayout(){
                         setViewingTask(null);
                         setEditingTask(task);
                     }}
+                />
+            )}
+            {showAddProjectModal &&(
+                <AddProjectModal
+                    onClose={()=>setShowAddProjectModal(false)}
+                    onAddProject={handelAddProject}
                 />
             )}
         </div>

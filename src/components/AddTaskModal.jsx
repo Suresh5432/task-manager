@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function AddTaskModal({ onClose, onAddTask, existingTask, defaultPriority="Medium", defaultStatus="To Do"}){
+function AddTaskModal({ onClose, onAddTask, existingTask, projects=[], defaultPriority="Medium", defaultStatus="To Do"}){
 
     const isEditing=Boolean(existingTask);
 
@@ -11,6 +11,7 @@ function AddTaskModal({ onClose, onAddTask, existingTask, defaultPriority="Mediu
       priority: existingTask?.priority ?? defaultPriority,
       tag: existingTask?.tag ?? "",
       status: existingTask?.status ?? defaultStatus,
+      projectId: existingTask?.projectId ?? "",
     });
 
     function handleChange(event){
@@ -32,6 +33,7 @@ function AddTaskModal({ onClose, onAddTask, existingTask, defaultPriority="Mediu
             priority: formData.priority,
             tag: formData.tag.trim(),
             status: formData.status,
+            projectId: formData.projectId || null,
         };
 
         onAddTask(task);
@@ -145,6 +147,22 @@ function AddTaskModal({ onClose, onAddTask, existingTask, defaultPriority="Mediu
                         required
                         maxLength={50}
                     />
+                    <label htmlFor="projectId">Project</label>
+                    <select
+                        id="projectId"
+                        name="projectId"
+                        value={formData.projectId}
+                        onChange={handleChange}
+                    >
+                        <option value="">No project</option>
+
+                        {projects.map((project) => (
+                            <option key={project.id} value={project.id}>
+                                {project.name}
+                            </option>
+                        ))}
+                    </select>
+                    
                     <div className="modal-actions">
                         <button
                             type="button"
