@@ -1,4 +1,25 @@
+import { useState } from "react";
+
 function TaskOverView({tasks, onDeleteTask, onEditTask, onUpdateStatus}){
+    const [searchTerm, setSearchTerm]=useState("");
+    const [statusFilter, setStatusFilter] = useState("All");
+    const [priorityFilter,setPriorityFilter]=useState("All");
+
+    const filteredTasks=tasks.filter((task)=>{
+        const query=searchTerm.toLowerCase().trim();
+
+        const matchesSearch=
+            (task.title ?? "").toLowerCase().includes(query) ||
+            (task.description ?? "").toLowerCase().includes(query) ||
+            (task.tag ?? "").toLowerCase().includes(query);
+
+        const matchesStatus=statusFilter==="All" || task.status ===statusFilter;
+
+        const matchesPriority=priorityFilter==="All" || task.priority === priorityFilter;
+
+        return matchesSearch && matchesStatus && matchesPriority;
+    });
+
     return (
         <section  className="task-overview">
             <div className="section-heading">
@@ -9,6 +30,37 @@ function TaskOverView({tasks, onDeleteTask, onEditTask, onUpdateStatus}){
                 <button className="text-button" type="button">
                     View all
                 </button>
+            </div>
+            <div className="task-toolbar">
+                <input
+                    type="search"
+                    className="task-search"
+                    placeholder="Search tasks.."
+                    value={searchTerm}
+                    onChange={(event)=>setSearchTerm(event.target.value)}
+                    aria-label="Search tasks"
+                />
+                <select
+                    value={statusFilter}
+                    onChange={(event)=> setStatusFilter(event.target.value)}
+                    aria-label="Filter by status"
+                >
+                    <option value="All">All statuses</option>
+                    <option value="To Do">To Do</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                </select>
+
+                <select
+                    value={priorityFilter}
+                    onChange={(event)=> setPriorityFilter(event.target.value)}
+                    aria-label="Filter by priority"
+                >
+                    <option value="All">All Priorities</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                </select>
             </div>
             <div className="task-table-wrapper">
                 <table className="task-table">
@@ -23,7 +75,14 @@ function TaskOverView({tasks, onDeleteTask, onEditTask, onUpdateStatus}){
                         </tr>
                     </thead>
                     <tbody>
-                        {tasks.map((task)=>(
+                        {filteredTasks.length=== 0 &&(
+                            <tr>
+                                <td colSpan={6} className="empty-tasks">
+                                    No tasks match your search or filters.
+                                </td>
+                            </tr>
+                        )}
+                        {filteredTasks.map((task)=>(
                             <tr key={task.id}>
                                 <td>
                                     <div className="task-name">{task.title}</div>
@@ -32,7 +91,7 @@ function TaskOverView({tasks, onDeleteTask, onEditTask, onUpdateStatus}){
                                 <td>{task.dueDate}</td>
                                 <td>
                                     <span
-                                        className={`task-badge priority-${(task.priority ?? "Medium").toLowerCase()}`}
+                                        className={`task-badge priorf.mapity-${(task.priority ?? "Medium").toLowerCase()}`}
                                     >
                                         {task.priority}
                                     </span>

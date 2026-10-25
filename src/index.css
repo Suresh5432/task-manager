@@ -1004,6 +1004,43 @@ button {
 }
 
 
+
+.task-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.task-search {
+  flex: 1;
+  min-width: 160px;
+}
+
+.task-toolbar input,
+.task-toolbar select {
+  padding: 10px 12px;
+  border: 1px solid #e3e6ef;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #30384b;
+  font: inherit;
+  font-size: 13px;
+}
+
+.task-toolbar input:focus,
+.task-toolbar select:focus {
+  outline: 2px solid #d9d6ff;
+  border-color: #6558e8;
+}
+
+.empty-tasks {
+  padding: 28px;
+  text-align: center;
+  color: #8b92a5;
+}
+
+
 /* Responsive layout */
 
 @media (max-width: 1150px) {
