@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 
 import ProjectOverview from "../components/ProjectOverview";
 import RightPanel from "../components/RightPanel";
@@ -38,10 +38,38 @@ const initialTasks = [
 ];
 
 function DashboardLayout(){
-    const [tasks ,setTasks]=useState(initialTasks);
+    const [tasks ,setTasks]=useState(()=>{
+        try{
+            const savedTasks=localStorage.getItem("taskpilot-tasks");
+
+            return savedTasks ? JSON.parse(savedTasks) : initialTasks;
+        }
+        catch{
+            return initialTasks;
+        }
+    });
+
     const [isModalOpen,setIsModalOpen] =useState(false);
+
     const [editingTask, setEditingTask]=useState(null);
-    const [activities, setActivities]=useState([]);
+
+    const [activities, setActivities]=useState(()=>{
+        try{
+            const savedActivities= localStorage.getItem("taskpilot-activities");
+            return savedActivities ? JSON.parse(savedActivities) : [];
+        }
+        catch {
+            return [];
+        }
+    });
+
+    useEffect(()=>{
+        localStorage.setItem("taskpilot-tasks",JSON.stringify(tasks));
+    },[tasks]);
+
+    useEffect(()=>{
+        localStorage.setItem("taskpilot-activities",JSON.stringify(activities));
+    },[activities]);
 
     function addActivity(title,description, icon){
         const activity={
@@ -125,8 +153,9 @@ function DashboardLayout(){
                 <RightPanel tasks={tasks} activities={activities}/>
 
             </div>
-            {isModalOpen || editingTask && (
+            {(isModalOpen || editingTask) && (
                 <AddTaskModal 
+                    key={editingTask?.id ?? "new-task"}
                     existingTask={editingTask}
                     onClose={()=>{
                         setIsModalOpen(false);

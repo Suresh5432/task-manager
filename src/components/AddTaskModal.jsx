@@ -30,18 +30,18 @@ function AddTaskModal({ onClose, onAddTask, existingTask}){
         
         const year=parseDate.getFullYear();
         const month=String(parseDate.getMonth()+1).padStart(2,"0");
-        const day=String(parseDate.getDay()).padStart(2,"0");
+        const day=String(parseDate.getDate()).padStart(2,"0");
 
         return `${year}-${month}-${day}`;
     }
 
     return (
-        <div className="modal-overlay" onClick={onclose}>
+        <div className="modal-overlay" onClick={onClose}>
             <section
                 className="task-modal"
                 role="dialog"
                 aria-modal="true"
-                aria-labelledby="model-title"
+                aria-labelledby="modal-title"
                 onClick={(event)=>event.stopPropagation()}
             >
                 <div className="modal-header">
@@ -56,7 +56,7 @@ function AddTaskModal({ onClose, onAddTask, existingTask}){
                     </div>
                     <button
                         type="button"
-                        className="model-close"
+                        className="modal-close"
                         onClick={onClose}
                         aria-label="Close modal"
                     >
