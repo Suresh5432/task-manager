@@ -2025,6 +2025,156 @@ button {
   }
 }
 
+/* settings page css */
+
+
+.settings-page {
+  min-width: 0;
+  margin-top: 24px;
+}
+
+.settings-heading {
+  margin-bottom: 22px;
+}
+
+.settings-heading h2 {
+  margin: 0;
+  color: #202638;
+  font-size: 21px;
+}
+
+.settings-heading p,
+.settings-section-heading p {
+  margin: 7px 0 0;
+  color: #8b92a5;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.settings-card {
+  margin-bottom: 18px;
+  padding: 22px;
+  background: #ffffff;
+  border: 1px solid #e9ebf3;
+  border-radius: 15px;
+}
+
+.settings-section-heading {
+  margin-bottom: 20px;
+}
+
+.settings-section-heading h3 {
+  margin: 0;
+  color: #30384b;
+  font-size: 15px;
+}
+
+.settings-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.settings-fields label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #596176;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.settings-fields input,
+.settings-fields select {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 11px 12px;
+  border: 1px solid #e3e6ef;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #30384b;
+  font: inherit;
+  font-size: 13px;
+}
+
+.settings-fields input:focus,
+.settings-fields select:focus {
+  outline: 2px solid #dedaff;
+  border-color: #6558e8;
+}
+
+.settings-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid #edf0f5;
+  cursor: pointer;
+}
+
+.settings-toggle span {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.settings-toggle strong {
+  color: #30384b;
+  font-size: 13px;
+}
+
+.settings-toggle small {
+  color: #8b92a5;
+  font-size: 12px;
+}
+
+.settings-toggle input {
+  width: 17px;
+  height: 17px;
+  accent-color: #6558e8;
+}
+
+.settings-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.settings-reset-button {
+  padding: 10px 15px;
+  border: 1px solid #e3e6ef;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #596176;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.settings-reset-button:hover {
+  background: #f8f9fc;
+}
+
+.settings-success {
+  color: #138566;
+  font-size: 13px;
+  text-align: right;
+}
+
+@media (max-width: 650px) {
+  .settings-card {
+    padding: 16px;
+  }
+
+  .settings-fields {
+    grid-template-columns: 1fr;
+  }
+}
+
 
 
 /* Responsive layout */

@@ -9,9 +9,9 @@ import AddTaskModal from "../components/AddTaskModal";
 import TaskDetailsModal from "../components/TaskDetailsModal";
 import TaskCalendar from "../components/TaskCalendar";
 import NotificationsPage from "../components/NotifictionsPage";
-import { notification } from "antd";
 import InboxPage from "../components/InboxPage";
 import IntegrationsPage from "../components/IntegrationsPage";
+import SettingsPage from "../components/SettingsPage";
 
 const initialTasks = [
   {
@@ -135,8 +135,9 @@ function DashboardLayout(){
         setTasks((currentTasks)=>
         currentTasks.map((item)=>
         item.id===taskId ? {...item, status: newStatus}: item));
+
         if(task&& task.status!==newStatus){
-            addActivity("Task status changed",`${task.title} → ${newStatus}`, "↻",newTask.id);
+            addActivity("Task status changed",`${task.title} → ${newStatus}`, "↻",task.id);
         }
     }
 
@@ -145,7 +146,7 @@ function DashboardLayout(){
             currentTasks.map((task)=>
                 task.id===updatedTask.id ? updatedTask : task)
         );
-        addActivity("Task updated", updatedTask.title,"✎", newTask.id)
+        addActivity("Task updated", updatedTask.title,"✎", updatedTask.id)
         setEditingTask(null);
     }
 
@@ -164,7 +165,7 @@ function DashboardLayout(){
         setTasks((currentTasks)=>
         currentTasks.filter((item)=> item.id!==taskId));
         if(task){
-            addActivity("Task deleted", task.title,"×",newTask.id);
+            addActivity("Task deleted", task.title,"×",task.id);
         }
     }
     const pageContent={
@@ -191,6 +192,10 @@ function DashboardLayout(){
         Integrations: {
           title: "Integrations",
           subtitle: "Manage your connected tools.",
+        },
+        Settings: {
+          title: "Settings",
+          subtitle: "Customize your profile and workspace preferences.",
         },
     };
 
@@ -289,6 +294,8 @@ function DashboardLayout(){
                     {activeView==="Inbox" && <InboxPage />}
 
                     {activeView ==="Integrations" && <IntegrationsPage />}
+
+                    {activeView === "Settings" && <SettingsPage />}
                 
                 </main>
 

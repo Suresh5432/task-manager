@@ -42,7 +42,10 @@ function Sidebar({ activeView, onNavigate, unreadNotificationCount=0}){
                 <span>Help & support</span>
             </button>
 
-            <button className="nav-item" type="button">
+            <button className={`nav-item ${activeView==="Settings" ? "active" : ""}`} 
+                type="button"
+                onClick={()=>onNavigate("Settings")}
+            >
                 <span className="nav-icon">⚙</span>
                 <span>Settings</span>
             </button>
