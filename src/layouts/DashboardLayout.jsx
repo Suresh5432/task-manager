@@ -7,6 +7,11 @@ import SummaryCards from "../components/SummaryCards";
 import TaskOverView from "../components/TaskOverview";
 import AddTaskModal from "../components/AddTaskModal";
 import TaskDetailsModal from "../components/TaskDetailsModal";
+import TaskCalendar from "../components/TaskCalendar";
+import NotificationsPage from "../components/NotifictionsPage";
+import { notification } from "antd";
+import InboxPage from "../components/InboxPage";
+import IntegrationsPage from "../components/IntegrationsPage";
 
 const initialTasks = [
   {
@@ -39,6 +44,7 @@ const initialTasks = [
 ];
 
 function DashboardLayout(){
+
     const [tasks ,setTasks]=useState(()=>{
         try{
             const savedTasks=localStorage.getItem("taskpilot-tasks");
@@ -66,6 +72,29 @@ function DashboardLayout(){
 
     const [viewingTask, setViewingTask]=useState(null);
 
+    const [activeView, setActiveView]=useState("Dashboard")
+
+    const [notifications, setNotifications] = useState(() => {
+      try {
+        return JSON.parse(
+          localStorage.getItem("taskpilot-notifications")
+        ) ?? [];
+      } catch {
+        return [];
+      }
+    });
+
+    const unreadNotificationCount=notifications.filter(
+        (notification)=>!notification.read
+    ).length;
+
+    useEffect(()=>{
+        localStorage.setItem(
+            "taskpilot-notifications",
+            JSON.stringify(notifications)
+        );
+    },[notifications]);
+
     useEffect(()=>{
         localStorage.setItem("taskpilot-tasks",JSON.stringify(tasks));
     },[tasks]);
@@ -74,15 +103,30 @@ function DashboardLayout(){
         localStorage.setItem("taskpilot-activities",JSON.stringify(activities));
     },[activities]);
 
-    function addActivity(title,description, icon){
+
+    function addActivity(title,description, icon,taskId=null){
+
+        const id=Date.now()+Math.random();
+
         const activity={
-            id: Date.now() + Math.random(),
+            id,
             title,
             description,
             icon,
             time: "just now"
         }
-        setActivities((current)=>[activity,...current].slice(0,10));
+        const notification ={
+            ...activity,
+            taskId,
+            read: false,
+        };
+
+        setActivities((current)=>
+            [activity,...current].slice(0,10));
+
+        setNotifications((current)=>
+        [notification, ...current].slice(0, 50)
+        );
     }
 
     function handleUpdateStatus(taskId, newStatus){
@@ -92,7 +136,7 @@ function DashboardLayout(){
         currentTasks.map((item)=>
         item.id===taskId ? {...item, status: newStatus}: item));
         if(task&& task.status!==newStatus){
-            addActivity("Task status changed",`${task.title} → ${newStatus}`, "↻");
+            addActivity("Task status changed",`${task.title} → ${newStatus}`, "↻",newTask.id);
         }
     }
 
@@ -101,7 +145,7 @@ function DashboardLayout(){
             currentTasks.map((task)=>
                 task.id===updatedTask.id ? updatedTask : task)
         );
-        addActivity("Task updated", updatedTask.title,"✎")
+        addActivity("Task updated", updatedTask.title,"✎", newTask.id)
         setEditingTask(null);
     }
 
@@ -110,7 +154,8 @@ function DashboardLayout(){
         addActivity(
             "new task created",
             newTask.title,
-            "+"
+            "+",
+            newTask.id
         );
     }
 
@@ -119,21 +164,80 @@ function DashboardLayout(){
         setTasks((currentTasks)=>
         currentTasks.filter((item)=> item.id!==taskId));
         if(task){
-            addActivity("Task deleted", task.title,"×");
+            addActivity("Task deleted", task.title,"×",newTask.id);
         }
+    }
+    const pageContent={
+        Dashboard: {
+            title: "Dashboard",
+            subtitle: "Welcome back! Here's your workspace overview.",
+        },
+        Tasks: {
+        title: "All Tasks",
+          subtitle: "Search, organize, and manage all your tasks.",
+        },
+        Calendar: {
+          title: "Calendar",
+          subtitle: "View and manage tasks by their due dates.",
+        },
+        Notifications: {
+          title: "Notifications",
+          subtitle: "Stay updated on your recent activity.",
+        },
+        Inbox: {
+          title: "Inbox",
+          subtitle: "Keep track of your messages and updates.",
+        },
+        Integrations: {
+          title: "Integrations",
+          subtitle: "Manage your connected tools.",
+        },
+    };
+
+    const currentPage=pageContent[activeView] ?? pageContent.Dashboard;
+
+    function handleMarkRead(notificationId) {
+      setNotifications((current) =>
+        current.map((notification) =>
+          notification.id === notificationId
+            ? { ...notification, read: true }
+            : notification
+        )
+      );
+    }
+
+    function handleMarkAllRead() {
+      setNotifications((current) =>
+        current.map((notification) => ({
+          ...notification,
+          read: true,
+        }))
+      );
+    }
+
+    function handleOpenNotificationTask(taskId) {
+      const task = tasks.find((item) => item.id === taskId);
+
+      if (task) {
+        setViewingTask(task);
+      }
     }
 
     return(
         <div className="app-background">
             <div className="dashboard-window">
 
-                <Sidebar />
+                <Sidebar 
+                    activeView={activeView}
+                    onNavigate={setActiveView}
+                    unreadNotificationCount={unreadNotificationCount}
+                />
 
                 <main className="main-content">
                     <header className="dashboard-header">
                         <div>
-                            <h1>Dashboard</h1>
-                            <p>Welcome back! Here's your workspace overview.</p>
+                            <h1>{currentPage.title}</h1>
+                            <p>{currentPage.subtitle}</p>
                         </div>
                         <button className="add-task-button" type="button"
                                 onClick={()=> setIsModalOpen(true)}
@@ -141,22 +245,57 @@ function DashboardLayout(){
                             + Add Task
                         </button>
                     </header>
+                    {activeView==="Dashboard" &&(
+                        <>
+                        <SummaryCards tasks={tasks}/>
 
-                    <SummaryCards tasks={tasks}/>
+                        <ProjectOverview/>
 
-                    <ProjectOverview/>
+                        <TaskOverView 
+                            tasks={tasks} 
+                            onDeleteTask={handleDeleteTask}
+                            onEditTask={setEditingTask}
+                            onUpdateStatus={handleUpdateStatus}
+                            onViewTask={setViewingTask}
+                        />
+                        </>
+                    )}
 
-                    <TaskOverView 
-                        tasks={tasks} 
-                        onDeleteTask={handleDeleteTask}
-                        onEditTask={setEditingTask}
-                        onUpdateStatus={handleUpdateStatus}
-                        onViewTask={setViewingTask}
-                    />
+                    {activeView === "Tasks" && (
+                        <TaskOverView
+                          tasks={tasks}
+                          onDeleteTask={handleDeleteTask}
+                          onEditTask={setEditingTask}
+                          onUpdateStatus={handleUpdateStatus}
+                          onViewTask={setViewingTask}
+                        />
+                    )}                  
+                    {activeView==='Calendar' &&(
+                        <TaskCalendar 
+                            tasks={tasks}
+                            onViewTask={setViewingTask}
+                        />
+                    )}
 
+                    {activeView === "Notifications" && (
+                      <NotificationsPage
+                        notifications={notifications}
+                        onMarkRead={handleMarkRead}
+                        onMarkAllRead={handleMarkAllRead}
+                        onOpenTask={handleOpenNotificationTask}
+                      />
+                    )}
+
+                    {activeView==="Inbox" && <InboxPage />}
+
+                    {activeView ==="Integrations" && <IntegrationsPage />}
+                
                 </main>
 
-                <RightPanel tasks={tasks} activities={activities}/>
+                {activeView==="Dashboard" && (
+                    <RightPanel tasks={tasks} activities={activities}/>
+                )}
+
 
             </div>
             {(isModalOpen || editingTask) && (

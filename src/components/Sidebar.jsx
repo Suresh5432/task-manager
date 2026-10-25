@@ -6,7 +6,7 @@ const menuItems = [
   { icon: "✉", label: "Inbox" },
   { icon: "⇄", label: "Integrations" },
 ];
-function Sidebar(){
+function Sidebar({ activeView, onNavigate, unreadNotificationCount=0}){
  return (
     <aside className="sidebar">
         <div className="brand">
@@ -19,10 +19,19 @@ function Sidebar(){
                 <button
                     key={item.label}
                     type="button"
-                    className={`nav-item ${item.label==="Dashboard" ? "active" :""}`}
+                    className={`nav-item ${activeView===item.label ? "active" :""}`}
+                    onClick={()=>onNavigate(item.label)}
                 >
-                <span className="nav-icon">{item.icon}</span>
-                <span>{item.label}</span>
+                <span className="nav-item-icon">{item.icon}</span>
+                <span className="nav-item-label">{item.label}</span>
+
+                {item.label==="Notifications" &&
+                    unreadNotificationCount>0 &&(
+                        <span className="notification-badge">
+                            {unreadNotificationCount>99 ? "99+" : unreadNotificationCount}
+                        </span>
+
+                    )}
                 </button>
             ))}
         </nav>
