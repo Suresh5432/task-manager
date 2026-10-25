@@ -6,6 +6,7 @@ import Sidebar from "../components/Sidebar";
 import SummaryCards from "../components/SummaryCards";
 import TaskOverView from "../components/TaskOverview";
 import AddTaskModal from "../components/AddTaskModal";
+import TaskDetailsModal from "../components/TaskDetailsModal";
 
 const initialTasks = [
   {
@@ -62,6 +63,8 @@ function DashboardLayout(){
             return [];
         }
     });
+
+    const [viewingTask, setViewingTask]=useState(null);
 
     useEffect(()=>{
         localStorage.setItem("taskpilot-tasks",JSON.stringify(tasks));
@@ -143,10 +146,13 @@ function DashboardLayout(){
 
                     <ProjectOverview/>
 
-                    <TaskOverView tasks={tasks} 
+                    <TaskOverView 
+                        tasks={tasks} 
                         onDeleteTask={handleDeleteTask}
                         onEditTask={setEditingTask}
-                        onUpdateStatus={handleUpdateStatus}/>
+                        onUpdateStatus={handleUpdateStatus}
+                        onViewTask={setViewingTask}
+                    />
 
                 </main>
 
@@ -162,6 +168,16 @@ function DashboardLayout(){
                         setEditingTask(null);
                     }}
                     onAddTask={editingTask ? handleEditTask : handleAddTask}
+                />
+            )}
+            {viewingTask && (
+                <TaskDetailsModal
+                    task={tasks.find((item)=>item.id===viewingTask.id) ?? viewingTask}
+                    onClose={()=> setViewingTask(null)}
+                    onEdit={(task)=>{
+                        setViewingTask(null);
+                        setEditingTask(task);
+                    }}
                 />
             )}
         </div>

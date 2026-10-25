@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { useEffect , useState } from "react";
 
-function TaskOverView({tasks, onDeleteTask, onEditTask, onUpdateStatus}){
+function TaskOverView({ tasks, onDeleteTask, onEditTask, onUpdateStatus, onViewTask }){
+
     const [searchTerm, setSearchTerm]=useState("");
     const [statusFilter, setStatusFilter] = useState("All");
     const [priorityFilter,setPriorityFilter]=useState("All");
+    const [sortBy, setSortBy]=useState("dueDate");
+    const [sortOrder, setSortOrder]=useState("asecending");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(5);
 
     const filteredTasks=tasks.filter((task)=>{
         const query=searchTerm.toLowerCase().trim();
@@ -19,6 +24,41 @@ function TaskOverView({tasks, onDeleteTask, onEditTask, onUpdateStatus}){
 
         return matchesSearch && matchesStatus && matchesPriority;
     });
+
+    const priorityRank={
+        High: 1,
+        Medium: 2,
+        Low:3,
+    };
+
+    const sortedTasks=[...filteredTasks].sort((a,b)=>{
+        let comparison=0;
+        if(sortBy==="title"){
+            comparison=(a.title ?? "").localeCompare(b.title ?? "");
+        }
+        else if(sortBy==="priority"){
+            comparison=(priorityRank[a.priority] ?? 99) -(priorityRank[b.priority] ?? 99);
+        }
+        else if(sortBy==="dueDate"){
+            const dateA=new Date(a.dueDate).getTime();
+            const dateB=new Date(b.dueDate).getDate();
+            comparison=
+                (Number.isNaN(dateA) ? Infinity :dateA)-
+                (Number.isNaN(dateB)? Infinity: dateB);
+        }
+        return sortOrder=== "ascending" ? comparison : -comparison; 
+    })
+    const totalPages=Math.ceil(sortedTasks.length/pageSize);
+    const startIndex=(currentPage-1)*pageSize;
+
+    const paginatedTasks=sortedTasks.slice(
+        startIndex,
+        startIndex+pageSize
+    )
+
+    useEffect(()=>{
+        setCurrentPage(1);
+    },[searchTerm,statusFilter,priorityFilter,sortBy,sortOrder,pageSize]);
 
     return (
         <section  className="task-overview">
@@ -61,6 +101,23 @@ function TaskOverView({tasks, onDeleteTask, onEditTask, onUpdateStatus}){
                     <option value="Medium">Medium</option>
                     <option value="Low">Low</option>
                 </select>
+                <select 
+                    value={sortBy}
+                    onChange={(event)=> setSortBy(event.target.value)}
+                    aria-label="Sort tasks by"
+                >
+                    <option value="dueDate">Sort by due date</option>
+                    <option value="title">Sort by title</option>
+                    <option value="priority">Sort by priority</option>
+                </select>
+                <select 
+                    value={sortOrder}
+                    onChange={(event)=> setSortOrder(event.target.value)}
+                    aria-label="Sort order"
+                >
+                    <option value="ascending">Ascending</option>
+                    <option value="descending">Descending</option>
+                </select>
             </div>
             <div className="task-table-wrapper">
                 <table className="task-table">
@@ -75,17 +132,23 @@ function TaskOverView({tasks, onDeleteTask, onEditTask, onUpdateStatus}){
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredTasks.length=== 0 &&(
+                        {paginatedTasks.length=== 0 &&(
                             <tr>
                                 <td colSpan={6} className="empty-tasks">
                                     No tasks match your search or filters.
                                 </td>
                             </tr>
                         )}
-                        {filteredTasks.map((task)=>(
+                        {paginatedTasks.map((task)=>(
                             <tr key={task.id}>
                                 <td>
-                                    <div className="task-name">{task.title}</div>
+                                    <button 
+                                        className="task-title-button"
+                                        type="button"
+                                        onClick={()=>onViewTask(task)}
+                                    >
+                                        {task.title}
+                                    </button>
                                     <div className="task-description">{task.description}</div>
                                 </td>
                                 <td>{task.dueDate}</td>
@@ -135,6 +198,42 @@ function TaskOverView({tasks, onDeleteTask, onEditTask, onUpdateStatus}){
                         ))}
                     </tbody>
                 </table>
+            </div>
+            <div className="pagination">
+                <span className="pagination-info">
+                    {sortedTasks.length===0 ? "No tasks" : 
+                    `Showing ${startIndex+1}-
+                    ${Math.min(startIndex+pageSize,sortedTasks.length)} of ${sortedTasks.length} tasks`}
+                </span>
+                <div className="pagination-controls">
+                    <label htmlFor="pageSize">Rows:</label>
+                    <select 
+                        id="pageSize"
+                        value={pageSize}
+                        onChange={(event)=> setPageSize(Number(event.target.value))}
+                    >
+                        <option value={5}>5</option>
+                        <option value={10}>10</option>
+                        <option value={20}>20</option>
+                    </select>
+                    <button
+                        type="button"
+                        disabled={currentPage<=1}
+                        onClick={()=>setCurrentPage((page)=>page-1)}
+                    >
+                        Previous
+                    </button>
+                    <span>
+                        Page {totalPages===0 ? 0 : currentPage} of {totalPages}
+                    </span>
+                    <button
+                        type="button"
+                        disabled={currentPage>=totalPages}
+                        onClick={()=>setCurrentPage((page)=> page+1)}
+                    >
+                        Next
+                    </button>
+                </div>
             </div>
         </section>
     )
