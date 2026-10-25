@@ -1,20 +1,37 @@
-function AddTaskModal({ onClose, onAddTask, existingTask}){
+import { useState } from "react";
+
+function AddTaskModal({ onClose, onAddTask, existingTask, defaultPriority="Medium", defaultStatus="To Do"}){
 
     const isEditing=Boolean(existingTask);
+
+    const [formData, setFormData] = useState({
+      title: existingTask?.title ?? "",
+      description: existingTask?.description ?? "",
+      dueDate: toDateInputValue(existingTask?.dueDate),
+      priority: existingTask?.priority ?? defaultPriority,
+      tag: existingTask?.tag ?? "",
+      status: existingTask?.status ?? defaultStatus,
+    });
+
+    function handleChange(event){
+        const { name, value }= event.target;
+
+        setFormData((current)=>({
+            ...current,[name]: value,
+        }));
+    }
 
     function handleSubmit(event){
         event.preventDefault();
 
-        const formData= new FormData(event.currentTarget);
-
          const task = {
             id: existingTask?.id ?? Date.now(),
-            title: formData.get("title").trim(),
-            description: formData.get("description").trim(),
-            dueDate: formData.get("dueDate"),
-            priority: formData.get("priority"),
-            tag: formData.get("tag").trim(),
-            status: existingTask?.status ?? "To Do",
+            title: formData.title.trim(),
+            description: formData.description.trim(),
+            dueDate: formData.dueDate,
+            priority: formData.priority,
+            tag: formData.tag.trim(),
+            status: formData.status,
         };
 
         onAddTask(task);
@@ -68,7 +85,8 @@ function AddTaskModal({ onClose, onAddTask, existingTask}){
                     <input
                         id="title"
                         name="title"
-                        defaultValue={existingTask ?.title ?? ""}
+                        value={formData.title}
+                        onChange={handleChange}
                         placeholder="Enter task title"
                         required
                         maxLength={100}
@@ -77,7 +95,8 @@ function AddTaskModal({ onClose, onAddTask, existingTask}){
                     <textarea
                         id="description"
                         name="description"
-                        defaultValue={existingTask?.description ?? ""}
+                        value={formData.description}
+                        onChange={handleChange}
                         placeholder="Describe your task"
                         rows={3}
                         required
@@ -88,24 +107,40 @@ function AddTaskModal({ onClose, onAddTask, existingTask}){
                         id="dueDate"
                         name="dueDate"
                         type="date"
-                        defaultValue={toDateInputValue(existingTask?.dueDate)}
+                        value={formData.dueDate}
+                        onChange={handleChange}
                         required
                     />
                     <label htmlFor="priority">Priority</label>
                     <select
                         id="priority"
                         name="priority"
-                        defaultValue={existingTask?.priority?? "Medium"}
+                        value={formData.priority}
+                        onChange={handleChange}
                     >
                         <option>Low</option>
                         <option>Medium</option>
                         <option>High</option>
                     </select>
+
+                    <label htmlFor="status">Status</label>
+                    <select
+                      id="status"
+                      name="status"
+                      value={formData.status}
+                      onChange={handleChange}
+                    >
+                      <option value="To Do">To Do</option>
+                      <option value="In Progress">In Progress</option>
+                      <option value="Completed">Completed</option>
+                    </select>
+
                     <label htmlFor="tag">Category / Tag</label>
                     <input
                         id="tag"
                         name="tag"
-                        defaultValue={existingTask?.tag ?? ""}
+                        value={formData.tag}
+                        onChange={handleChange}
                         placeholder="e.g. Design, Development"
                         required
                         maxLength={50}

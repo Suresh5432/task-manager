@@ -22,7 +22,7 @@ function loadSettings() {
   }
 }
 
-function SettingsPage() {
+function SettingsPage({onSettingsChange}) {
   const [settings, setSettings] = useState(loadSettings);
   const [savedMessage, setSavedMessage] = useState("");
 
@@ -34,10 +34,18 @@ function SettingsPage() {
   }, [settings]);
 
   function updateSetting(key, value) {
-    setSettings((current) => ({
+    setSettings((current) => {
+      const updated={
       ...current,
       [key]: value,
-    }));
+      };
+       localStorage.setItem(
+        "taskpilot-settings",
+        JSON.stringify(updated)
+      );
+      onSettingsChange?.(updated);
+      return updated
+    });
     setSavedMessage("");
   }
 
@@ -48,7 +56,7 @@ function SettingsPage() {
       "taskpilot-settings",
       JSON.stringify(settings)
     );
-
+    onSettingsChange?.(settings);
     setSavedMessage("Settings saved successfully.");
   }
 
@@ -58,6 +66,7 @@ function SettingsPage() {
       "taskpilot-settings",
       JSON.stringify(defaultSettings)
     );
+    onSettingsChange?.(defaultSettings);
     setSavedMessage("Settings restored to defaults.");
   }
 

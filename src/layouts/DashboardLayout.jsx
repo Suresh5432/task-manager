@@ -84,6 +84,23 @@ function DashboardLayout(){
       }
     });
 
+    const [settings, setSettings]=useState(()=>{
+        try{
+            return JSON.parse(
+                localStorage.getItem("taskpilot-settings")
+            ) ?? {
+                defaultPriority: "Medium",
+                defaultStatus: "To Do",
+            };
+        }
+        catch{
+            return {
+                defaultPriority: "Medium",
+                defaultStatus: "To Do",
+            };
+        }
+    });
+
     const unreadNotificationCount=notifications.filter(
         (notification)=>!notification.read
     ).length;
@@ -103,6 +120,11 @@ function DashboardLayout(){
         localStorage.setItem("taskpilot-activities",JSON.stringify(activities));
     },[activities]);
 
+    useEffect(()=>{
+        document.documentElement.setAttribute("date-theme",
+            settings.theme || "Light"
+        );
+    },[settings.theme]);
 
     function addActivity(title,description, icon,taskId=null){
 
@@ -295,7 +317,9 @@ function DashboardLayout(){
 
                     {activeView ==="Integrations" && <IntegrationsPage />}
 
-                    {activeView === "Settings" && <SettingsPage />}
+                    {activeView === "Settings" && <SettingsPage 
+                            onSettingsChange={setSettings}
+                    />}
                 
                 </main>
 
@@ -314,6 +338,8 @@ function DashboardLayout(){
                         setEditingTask(null);
                     }}
                     onAddTask={editingTask ? handleEditTask : handleAddTask}
+                    defaultPriority={settings.defaultPriority}
+                    defaultStatus={settings.defaultStatus}
                 />
             )}
             {viewingTask && (
