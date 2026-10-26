@@ -1,6 +1,6 @@
 import { getTaskStats } from "../utils/taskUtils";
 
-function RightPanel({ tasks, activities }){
+function RightPanel({ tasks, activities, onViewAll }){
 
     const stats = getTaskStats(tasks);
 
@@ -31,15 +31,29 @@ function RightPanel({ tasks, activities }){
         <section className="panel-card">
             <h2>Task Progress</h2>
             <p className="panel-subtitle">Your overall productivity</p>
+            
             <div
-            className="progress-circle"
-            style={{"--progress": `${completionPercentage}%`,}}
+              className="progress-circle"
+              style={{
+                "--completed": `${
+                  totalTasks ? (stats.completed / totalTasks) * 100 : 0
+                }%`,
+                "--in-progress": `${
+                  totalTasks ? (stats.inProgress / totalTasks) * 100 : 0
+                }%`,
+                "--todo": `${
+                  totalTasks ? (stats.toDo / totalTasks) * 100 : 0
+                }%`,
+              }}
+              role="img"
+              aria-label={`${stats.completed} completed, ${stats.inProgress} in progress, ${stats.toDo} to do`}
             >
-                <div className="progress-circle-inner">
-                    <strong>{completionPercentage}%</strong>
-                    <span>Completed</span>
-                </div>
+              <div className="progress-circle-inner">
+                <strong>{completionPercentage}%</strong>
+                <span>Completed</span>
+              </div>
             </div>
+
             <div className="progress-list">
                 {progress.map((item)=>{
                     const percentage =
@@ -70,7 +84,9 @@ function RightPanel({ tasks, activities }){
         <section className="panel-card activity-card">
             <div className="activity-heading">
                 <h2>Latest Activity</h2>
-                <button className="text-button" type="button">
+                <button className="text-button" type="button"
+                    onClick={onViewAll}
+                >
                     View all
                 </button>
             </div>
@@ -79,7 +95,7 @@ function RightPanel({ tasks, activities }){
                     <p className="panel-subtitle">
                         No activity yet. Start by creating a task. 
                     </p>
-                ):(activities.map((activity)=>(
+                ):(activities.slice(0, 4).map((activity)=>(
                     <div className="activity-item" key={activity.id}>
                         <div className="activity-icon">{activity.icon}</div>
                         <div className="activity-content">

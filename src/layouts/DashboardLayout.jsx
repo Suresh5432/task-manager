@@ -13,6 +13,7 @@ import InboxPage from "../components/InboxPage";
 import IntegrationsPage from "../components/IntegrationsPage";
 import SettingsPage from "../components/SettingsPage";
 import AddProjectModal from "../components/AddProjectModal";
+import initialProjects from "../data/initialProjects";
 
 const initialTasks = [
   {
@@ -93,10 +94,10 @@ function DashboardLayout(){
     const [projects, setProjects]=useState(()=>{
         try{
             const saved =localStorage.getItem("taskpilot-projects");
-            return saved ? JSON.parse(saved) : [];
+            return saved !==null ? JSON.parse(saved) : initialProjects;
         }
         catch{
-            return [];
+            return initialProjects;
         }
     });
     useEffect(()=>{
@@ -111,6 +112,31 @@ function DashboardLayout(){
             ...currentProjects,
             newProject,
         ]);
+    }
+
+    function handleDeleteProject(projectId){
+        const selectedProject =projects.find(
+            (item)=> item.id===projectId
+        );
+        if(!selectedProject) return;
+
+        const confirmed =window.confirm(
+            `Delete "${selectedProject.name}" ? Tasks assigned to this project will be kept but unassigned.`
+        );
+
+        if (!confirmed) return;
+
+        setProjects((currentProjects)=>
+            currentProjects.filter(
+                (item)=> item.id !==projectId
+            )    
+        );
+    
+        setTasks((currentTasks)=>
+            currentTasks.map((task)=>
+                task.projectId===projectId ? {...task, projectId: null} : task 
+            )
+        );
     }
 
     function getProjectProgress(projectId){
@@ -308,14 +334,13 @@ function DashboardLayout(){
 
     return(
         <div className="app-background">
-            <div className="dashboard-window">
 
-                <Sidebar 
+            <Sidebar 
                     activeView={activeView}
                     onNavigate={setActiveView}
                     unreadNotificationCount={unreadNotificationCount}
                 />
-
+            <div className="dashboard-window">
                 <main className="main-content">
                     <header className="dashboard-header">
                         <div>
@@ -346,6 +371,7 @@ function DashboardLayout(){
                             projects={projects}
                             tasks={tasks}
                             getProjectProgress={getProjectProgress}
+                            onDeleteProject={handleDeleteProject}
                         />
 
                         
@@ -356,6 +382,8 @@ function DashboardLayout(){
                             onEditTask={setEditingTask}
                             onUpdateStatus={handleUpdateStatus}
                             onViewTask={setViewingTask}
+                            onViewAll={()=> setActiveView("Tasks")}
+                            showViewAll={true}
                         />
                         </>
                     )}
@@ -367,6 +395,7 @@ function DashboardLayout(){
                           onEditTask={setEditingTask}
                           onUpdateStatus={handleUpdateStatus}
                           onViewTask={setViewingTask}
+                          showViewAll={false}
                         />
                     )}                  
                     {activeView==='Calendar' &&(
@@ -397,7 +426,9 @@ function DashboardLayout(){
                 </main>
 
                 {activeView==="Dashboard" && (
-                    <RightPanel tasks={tasks} activities={activities}/>
+                    <RightPanel tasks={tasks} activities={activities}
+                        onViewAll={()=>setActiveView("Notifications")}
+                    />
                 )}
 
 

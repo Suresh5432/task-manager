@@ -1,6 +1,6 @@
 import { useEffect , useState } from "react";
 
-function TaskOverView({ tasks, onDeleteTask, onEditTask, onUpdateStatus, onViewTask }){
+function TaskOverView({ tasks, onDeleteTask, onEditTask, onUpdateStatus, onViewTask, onViewAll, showViewAll=true }){
 
     const [searchTerm, setSearchTerm]=useState("");
     const [statusFilter, setStatusFilter] = useState("All");
@@ -119,9 +119,11 @@ function TaskOverView({ tasks, onDeleteTask, onEditTask, onUpdateStatus, onViewT
                     <h2>Tasks Overview</h2>
                     <p>Manage and track your recent tasks</p>
                 </div>
-                <button className="text-button" type="button">
-                    View all
-                </button>
+                {showViewAll &&(
+                    <button className="text-button" type="button" onClick={()=> onViewAll?.()}>
+                        View all
+                    </button>
+                )}
             </div>
             <div className="task-toolbar">
                 <input

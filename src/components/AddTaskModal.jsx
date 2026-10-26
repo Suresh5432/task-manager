@@ -1,5 +1,24 @@
 import { useState } from "react";
 
+function toDateInputValue(date) {
+  if (!date) return "";
+
+  // Already in the format expected by an HTML date input
+  if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    return date;
+  }
+
+  const parsedDate = new Date(date);
+
+  if (Number.isNaN(parsedDate.getTime())) return "";
+
+  const year = parsedDate.getFullYear();
+  const month = String(parsedDate.getMonth() + 1).padStart(2, "0");
+  const day = String(parsedDate.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
 function AddTaskModal({ onClose, onAddTask, existingTask, projects=[], defaultPriority="Medium", defaultStatus="To Do"}){
 
     const isEditing=Boolean(existingTask);
@@ -38,20 +57,6 @@ function AddTaskModal({ onClose, onAddTask, existingTask, projects=[], defaultPr
 
         onAddTask(task);
         onClose();
-    }
-
-    function toDateInputValue(date){
-        if(!date) return "";
-
-        const parseDate =new Date(date);
-
-        if(Number.isNaN(parseDate.getTime())) return date;
-        
-        const year=parseDate.getFullYear();
-        const month=String(parseDate.getMonth()+1).padStart(2,"0");
-        const day=String(parseDate.getDate()).padStart(2,"0");
-
-        return `${year}-${month}-${day}`;
     }
 
     return (
